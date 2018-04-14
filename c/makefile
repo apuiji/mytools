@@ -1,4 +1,4 @@
-TARGET:=libmytools.so
+TARGET:=libmytools.a
 MOD:=mem varray linked
 OBJ:=$(addprefix obj/, $(addsuffix .o, $(MOD)))
 HEAD:=head
@@ -8,13 +8,13 @@ LIBDIR:=
 LIBOP:=$(addprefix -L , $(LIBDIR)) $(addprefix -l , $(LIB))
 
 $(TARGET):$(OBJ)
-	gcc $(HEADOP) $(LIBOP) -o $@ obj/*.o -shared
+	ar -rvf $@ $^
 
 debug:head/*.h src/*.c
 	gcc $(HEADOP) $(LIBOP) -o $@ src/*.c -g
 
 obj/%.o:src/%.c head/%.h
-	gcc $(HEADOP) -o $@ $< -c -fPIC
+	gcc $(HEADOP) -o $@ $< -c
 
 clean-debug:
 	rm debug
