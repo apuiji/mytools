@@ -7,10 +7,10 @@ typedef struct varray_t{
 	void*point;
 	size_t esize, length, size;
 }varray_t;
-int varrayc(varray_t*, off_t, void*);
+extern int varrayc(varray_t*, off_t, void*);
 #define varrayr(me,i) ((void*)((me)->esize*i+(char*)(me)->point))
-int varrayu(varray_t*, off_t, void*);
-int varrayd(varray_t*, off_t, size_t);
-int varrayresize(varray_t*, size_t);
+extern int varrayu(varray_t*, off_t, void*);
+extern int varrayd(varray_t*, off_t, size_t);
+extern int varrayresize(varray_t*, size_t);
 
 #endif//VARRAY
