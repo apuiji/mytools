@@ -8,10 +8,10 @@ LIBDIR:=
 LIBOP:=$(addprefix -L , $(LIBDIR)) $(addprefix -l , $(LIB))
 
 $(TARGET):$(OBJ)
-	ar -rvf $@ $^
+	ar -rcs $@ $^
 
 debug:head/*.h src/*.c
-	gcc $(HEADOP) $(LIBOP) -o $@ src/*.c -g
+	gcc $(HEADOP) -o $@ src/*.c -g $(LIBOP)
 
 obj/%.o:src/%.c head/%.h
 	gcc $(HEADOP) -o $@ $< -c
