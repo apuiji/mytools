@@ -14,25 +14,32 @@ void linkedins(linked_t*me, linked_t*him){
 	for(me=me->next=him;me->next!=NULL;me=me->next);
 	me->next = next;
 }
-size_t linkedrmv(linked_t*me, size_t size, linked_t**pops){
-	if(me==NULL||size==0)return 0;
-	linked_t*rmv = me->next;
-	if(pops!=NULL)*pops = rmv;
-	size_t npop = 1;
-	for(;rmv!=NULL&&npop<=size;++npop)rmv=rmv->next;
-	me->next = rmv;
-	return npop;
+linked_t*linkedrmv(linked_t*me, size_t size, size_t*_nrmv, linked_t**last){
+	if(me==NULL||size==0)return NULL;
+	linked_t*result = me->next;
+	size_t nrmv = 1;
+	for(linked_t*rmv=result;1;++nrmv){
+		if(rmv==NULL||nrmv>=size){
+			if(last!=NULL)*last=rmv;
+			me->next = rmv==NULL?NULL:rmv->next;
+			break;
+		}
+		rmv=rmv->next;
+	}
+	if(_nrmv!=NULL)*_nrmv=nrmv;
+	return result;
 }
-size_t linkedreverse(linked_t*me, linked_t*prev){
+linked_t*linkedreverse(linked_t*me, linked_t*prev, size_t*size){
 	size_t i = 0;
-	for(linked_t*next=NULL;me!=NULL;me=next){
-		if(me==NULL)break;
+	for(linked_t*next=me;next!=NULL;){
+		me = next;
 		next = me->next;
 		me->next = prev;
 		prev = me;
 		++i;
 	}
-	return i;
+	if(size!=NULL)*size=i;
+	return me;
 }
 size_t linked2array(void*dest, size_t esize, size_t length, linked_t*src){
 	size_t i = 0;
