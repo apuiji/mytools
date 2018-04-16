@@ -8,11 +8,12 @@ size_t linkedlen(linked_t*me){
 	for(;me!=NULL;me=me->next)++len;
 	return len;
 }
-void linkedins(linked_t*me, linked_t*him){
+void linkedins(linked_t*me, linked_t*him, linked_t**last){
 	if(me==NULL||him==NULL)return;
 	linked_t*next = me->next;
 	for(me=me->next=him;me->next!=NULL;me=me->next);
 	me->next = next;
+	if(last!=NULL)*last=me;
 }
 linked_t*linkedrmv(linked_t*me, size_t size, size_t*_nrmv, linked_t**last){
 	if(me==NULL||size==0)return NULL;
