@@ -1,7 +1,7 @@
 #include<string.h>
 #include"mem.h"
 
-void memshift(void*p, size_t size, off_t off){
+void memshift(void*p, size_t size, off_t off, int c){
 	if(off==0)return;
 	off_t uoff = off<0?-off:off;
 	size -= uoff;
@@ -12,5 +12,6 @@ void memshift(void*p, size_t size, off_t off){
 		dest=uoff+(char*)p;	src=p;
 	}
 	memmove(dest, src, size);
+	memset(src, c, size);
 }
 
