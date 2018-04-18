@@ -47,7 +47,7 @@ size_t linked2array(void*dest, size_t esize, size_t length, linked_t*src){
 	for(;i<length;++i){
 		if(src==NULL)break;
 		src = src->next;
-		memcpy(esize*i+(char*)dest, src->point, esize);
+		memcpy(esize*i+(char*)dest, src+1, esize);
 	}
 	return i;
 }
