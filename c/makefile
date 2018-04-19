@@ -1,5 +1,5 @@
 TARGET:=libmytools.a
-MOD:=mem varray linked
+MOD:=mem varray linked utf8str
 OBJ:=$(addprefix obj/, $(addsuffix .o, $(MOD)))
 HEAD:=head
 HEADOP:=$(addprefix -I , $(HEAD))
