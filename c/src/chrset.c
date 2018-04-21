@@ -1,5 +1,7 @@
 #include"chrset.h"
 
+#include<stddef.h>
+
 char*strget(const char*s, chrsize_fn fn, int i, size_t*outsize){
 	size_t size = 1;
 	for(;i>=0;--i){
@@ -7,25 +9,25 @@ char*strget(const char*s, chrsize_fn fn, int i, size_t*outsize){
 		if(*s=='\0')break;
 	}
 	if(outsize!=NULL)*outsize=size;
-	return s;
+	return (char*)s;
 }
 size_t strlenof(const char*s, chrsize_fn fn, size_t*outsincount){
 	size_t len=0, chrsize=0, sincount=0;
-	for(char ch=*s;1;ch=*src){
+	for(char ch=*s;1;ch=*s){
 		chrsize = fn(s);
 		if(chrsize==1)++sincount;
 		if(ch=='\0')break;
 		++len;
 		s += chrsize;
 	}
-	if(outsinchr!=NULL)*outsincount=sincount;
+	if(outsincount!=NULL)*outsincount=sincount;
 	return len;
 }
 
 size_t chrsize_ascii(const char*s){return 1;}
 size_t chrsize_gbk(const char*s){return *s>0x80?2:1;}
 size_t chrsize_utf8(const char*s){
-	char ch = *src;
+	char ch = *s;
 	if(ch>0xfc)return 6;
 	if(ch>0xf8)return 5;
 	if(ch>0xf0)return 4;
