@@ -4,18 +4,17 @@
 #include<sys/types.h>
 #include<stdbool.h>
 
-typedef struct chrset_t{
-	bool fix;
+typedef struct chrset_t chrset_t;
+struct chrset_t{
 	size_t(*chrsize)(const char*);
-	bool(*isascii)(const char*);
-	bool(*eqascii)(const char*, int);
-}chrset_t;
-extern char*strget(const char*, chrsize_fn, int, size_t*);
-extern size_t strlenof(const char*, chrsize_fn, size_t*);
+	bool(*isascii)(const chrset_t*, const char*, size_t*);
+	bool(*eqascii)(const chrset_t*, const char*, int);
+};
 
-extern chrset_t
-	chrset_ascii,
-	chrset_gbk,
-	chrset_utf8;
+extern size_t strlenof(const chrset_t*, const char*, size_t*);
+extern char* strgetof(const chrset_t*, const char*, int, size_t*);
+
+extern bool isascii4varchrset(const chrset_t*, const char*, size_t*);
+extern bool eqascii4varchrset(const chrset_t*, const char*, int);
 
 #endif//CHRSET
