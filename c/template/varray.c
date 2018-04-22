@@ -18,7 +18,7 @@ int varrayc(varray_t*me, off_t i, void*pvalue){
 	if(i<0){
 		if(tryresize(me,me->length-i))return -1;
 		me->length -= i;
-		memshift(me->point, me->length, -i*me->esize);
+		memshift(me->point, me->length, -i*me->esize, 0);
 		memcpy(me->point, pvalue, me->esize);
 	}else if(i>=me->length){
 		if(tryresize(me,i+1))return -1;
@@ -27,7 +27,7 @@ int varrayc(varray_t*me, off_t i, void*pvalue){
 	}else{
 		if(tryresize(me,me->length+1))return -1;
 		++me->length;
-		memshift(varrayr(me,i), me->length-i, me->esize);
+		memshift(varrayr(me,i), me->length-i, me->esize, 0);
 		memcpy(varrayr(me,i), pvalue, me->esize);
 	}
 	return 0;
@@ -45,7 +45,7 @@ int varrayd(varray_t*me, off_t i, size_t length){
 	if(outlength(me,i))return -1;
 	length = i+length>me->length?me->length-i:length;
 	void*del = varrayr(me,i);
-	memshift(del, (me->length-=length)-i, -length*me->esize);
+	memshift(del, (me->length-=length)-i, -length*me->esize, 0);
 	return 0;
 }
 int varrayresize(varray_t*me, size_t newsize){

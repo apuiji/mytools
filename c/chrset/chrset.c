@@ -24,10 +24,14 @@ size_t strlenof(const char*s, chrsize_fn fn, size_t*outsincount){
 	return len;
 }
 
+static bool isascii4nofix(const char*){
+	
+}
+chrset_t chrset_ascii = {};
 size_t chrsize_ascii(const char*s){return 1;}
 size_t chrsize_gbk(const char*s){return *s>0x80?2:1;}
 size_t chrsize_utf8(const char*s){
-	char ch = *s;
+	unsigned char ch = *s;
 	if(ch>0xfc)return 6;
 	if(ch>0xf8)return 5;
 	if(ch>0xf0)return 4;
