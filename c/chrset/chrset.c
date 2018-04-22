@@ -2,10 +2,12 @@
 
 #include<stddef.h>
 
-size_t strlenof(const chrset_t*me, const char*s, size_t*outnascii){
+size_t strlenof(
+	const chrset_t*me, const char*s, size_t*outnascii
+){
 	size_t len=0, chrsize=0, nascii=0;
 	while(1){
-		if(me->isascii(me,s,&chrsize))++nascii;
+		if(me->isascii(me,s,NULL,&chrsize,NULL))++nascii;
 		if(*s=='\0')break;
 		++len;
 		s += chrsize;
@@ -13,7 +15,9 @@ size_t strlenof(const chrset_t*me, const char*s, size_t*outnascii){
 	if(outnascii!=NULL)*outnascii=nascii;
 	return len;
 }
-char*strgetof(const chrset_t*me, const char*s, int i, size_t*outchrsize){
+char*strgetof(
+	const chrset_t*me, const char*s, int i, size_t*outchrsize
+){
 	size_t chrsize = 1;
 	for(;i>=0;--i){
 		s += (chrsize=me->chrsize(s));
@@ -23,13 +27,25 @@ char*strgetof(const chrset_t*me, const char*s, int i, size_t*outchrsize){
 	return (char*)s;
 }
 
-bool isascii4varchrset(const chrset_t*me, const char*s, size_t*outchrsize){
+bool isascii4varchrset(
+	const chrset_t*me, const char*s,
+	char*outchr, size_t*outchrsize,
+	const char*rng
+){
 	size_t chrsize = me->chrsize(s);
 	if(outchrsize!=NULL)*outchrsize=chrsize;
-	return chrsize==1;
-}
-extern bool eqascii4varchrset(const chrset_t*me, const char*s, int ch){
-	if(!me->isascii(me, s, NULL))return false;
-	return *s==ch;
+	if(chrsize>1)return false;
+	char chr = *s;
+	bool result = false;
+	if(rng==NULL)result=true;
+	else while(1){
+		if(chr==*rng){
+			result = true;
+			break;
+		}
+		if(chr=='\0')break;
+	}
+	if(result&&outchr!=NULL)*outchr=chr;
+	return result;
 }
 
