@@ -5,10 +5,11 @@
 size_t strlenof(
 	const chrset_t*me, const char*s, size_t*outnascii
 ){
+	char asciich;	bool isascii;
 	size_t len=0, chrsize=0, nascii=0;
 	while(1){
-		if(me->isascii(me,s,NULL,&chrsize))++nascii;
-		if(*s=='\0')break;
+		if(isascii=me->isascii(me,s,&asciich,&chrsize))++nascii;
+		if(isascii&&asciich=='\0')break;
 		++len;
 		s += chrsize;
 	}
@@ -18,10 +19,11 @@ size_t strlenof(
 char*strgetof(
 	const chrset_t*me, const char*s, int i, size_t*outchrsize
 ){
-	size_t chrsize = 1;
+	char asciich;	bool isascii;	size_t chrsize;
 	for(;i>=0;--i){
-		s += (chrsize=me->chrsize(s));
-		if(*s=='\0')break;
+		isascii = me->isascii(me,s,&asciich,&chrsize);
+		if(isascii&&asciich=='\0')break;
+		s += chrsize;
 	}
 	if(outchrsize!=NULL)*outchrsize=chrsize;
 	return (char*)s;
