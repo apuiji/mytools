@@ -3,6 +3,6 @@
 
 #include"../chrset.h"
 
-extern chrset_t chrset_gbk;
+extern const chrset_t chrset_gbk;
 
 #endif//CHRSET_GBK

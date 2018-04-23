@@ -7,7 +7,7 @@ size_t strlenof(
 ){
 	size_t len=0, chrsize=0, nascii=0;
 	while(1){
-		if(me->isascii(me,s,NULL,&chrsize,NULL))++nascii;
+		if(me->isascii(me,s,NULL,&chrsize))++nascii;
 		if(*s=='\0')break;
 		++len;
 		s += chrsize;
@@ -28,24 +28,13 @@ char*strgetof(
 }
 
 bool isascii4varchrset(
-	const chrset_t*me, const char*s,
-	char*outchr, size_t*outchrsize,
-	const char*rng
+	const chrset_t*me, const char*s, char*outchr, size_t*outchrsize
 ){
 	size_t chrsize = me->chrsize(s);
 	if(outchrsize!=NULL)*outchrsize=chrsize;
 	if(chrsize>1)return false;
 	char chr = *s;
-	bool result = false;
-	if(rng==NULL)result=true;
-	else while(1){
-		if(chr==*rng){
-			result = true;
-			break;
-		}
-		if(chr=='\0')break;
-	}
-	if(result&&outchr!=NULL)*outchr=chr;
-	return result;
+	if(outchr!=NULL)*outchr=chr;
+	return true;
 }
 

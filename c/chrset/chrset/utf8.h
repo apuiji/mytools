@@ -3,6 +3,6 @@
 
 #include"../chrset.h"
 
-extern chrset_t chrset_utf8;
+extern const chrset_t chrset_utf8;
 
 #endif//CHRSET_UTF8

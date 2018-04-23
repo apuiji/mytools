@@ -1,10 +1,9 @@
 #include"utf8.h"
 
 static size_t chrsize(const char*);
-chrset_t chrset_utf8 = {
+const chrset_t chrset_utf8 = {
 	chrsize:chrsize,
 	isascii:isascii4varchrset,
-	eqascii:eqascii4varchrset,
 };
 
 size_t chrsize(const char*s){
