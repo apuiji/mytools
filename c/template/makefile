@@ -1,5 +1,5 @@
 TARGET:=../libtemplate.a
-MOD:=mem varray linked
+MOD:=mem varray linked strbuf
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
