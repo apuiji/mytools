@@ -4,15 +4,16 @@
 #include<stdlib.h>
 #include<string.h>
 
-int strbufapp(strbuf_t*me, const char*app){
-	size_t len=strlen(app), size=len+1;
+int strbufapp(strbuf_t*me, const char*app, size_t len){
+	size_t size = len+1;
 	linked_t*node = (linked_t*)malloc(
 		sizeof(linked_t)+sizeof(size_t)+size);
 	if(errno)return errno;
 	node->next = NULL;
 	size_t*plen = (size_t*)(node+1);
 	*plen = len;
-	memcpy(plen+1, app, size);
+	char*pcont = (char*)(plen+1);
+	memcpy(pcont,app,len);	pcont[len]='\0';
 	me->totallen += len;
 	linkedins(me->tail, node, &(me->tail));
 	return 0;

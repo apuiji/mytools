@@ -13,7 +13,7 @@ typedef struct strbuf_t{
 	me->totallen = 0;\
 	me->tail = &(me->head);\
 }
-extern int strbufapp(strbuf_t*, const char*);
+extern int strbufapp(strbuf_t*, const char*, size_t);
 extern int strbufbuild(char**, strbuf_t*);
 extern void strbuffree(strbuf_t*);
 
