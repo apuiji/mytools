@@ -1,5 +1,7 @@
 #include"bintree.h"
 
+#include<stddef.h>
+
 int btdepth(btnod_t*me){
 	if(me==NULL)return 0;
 	int depthl=btdepth(me->left), depthr=btdepth(me->right);
@@ -12,7 +14,7 @@ btnod_t*btxmost(btnod_t*me, int x){
 		if(next==NULL)return(btnod_t*)asarray;
 	}
 }
-int bt4each(btnod_t*tree, bt4each how, int(*hdl)(btnod_t*)){
+int bt4each(btnod_t*tree, bt4each_t how, int(*hdl)(btnod_t*)){
 	if(tree==NULL)return 0;
 	int fail = 0;
 	switch(how){

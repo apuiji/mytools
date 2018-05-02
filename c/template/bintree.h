@@ -8,7 +8,7 @@ struct btnod_t{
 
 extern int btdepth(btnod_t*);
 extern btnod_t*btxmost(btnod_t*, int);
-typedef struct{
+typedef enum{
 	NLR, LNR, LRN, NRL, RNL, RLN,
 }bt4each_t;
 extern int bt4each(btnod_t*, bt4each_t, int(*)(btnod_t*));

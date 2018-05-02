@@ -2,6 +2,7 @@
 #define BST
 
 #include"bintree.h"
+#include<stddef.h>
 
 typedef struct bstnod_t bstnod_t;
 struct bstnod_t{

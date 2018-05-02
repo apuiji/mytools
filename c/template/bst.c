@@ -1,6 +1,7 @@
 #include"bst.h"
 
 #include<errno.h>
+#include<stdlib.h>
 #include<string.h>
 
 static int put(bstnod_t**, void*, size_t);
@@ -9,38 +10,43 @@ int bstput(bst_t*me, void*item, size_t size){
 	for(bstnod_t*nod=me->root,**next;1;nod=*next){
 		int cmp = me->cmp(item, nod->data);
 		if(!cmp)return -1;
-		next = cmp<0?&(nod->left):&(nod->right);
+		next = (bstnod_t**)(cmp<0?&(nod->proto.left):&(nod->proto.right));
 		if(*next==NULL)return put(next,item,size);
 	}
 }
 static int put(bstnod_t**dest, void*item, size_t size){
-	*dest = (nod_t*)malloc(sizeof(nod_t)+size);
+	*dest = (bstnod_t*)malloc(sizeof(bstnod_t)+size);
 	if(errno)return errno;
-	**dest = (nod_t)0;
+	memset(*dest, 0, sizeof(bstnod_t));
 	memcpy((*dest)->data, item, size);
 	return 0;
 }
 int bstget(bstnod_t**dest, bst_t*me, void*key){
-	for(nod_t*nod=me->root,*next;nod!=NULL;nod=next){
+	for(bstnod_t*nod=me->root,*next;nod!=NULL;nod=next){
 		int cmp = me->cmp(key, nod->data);
 		if(!cmp){*dest=nod;return 0;}
-		next = cmp<0?nod->left:nod->right;
+		next = (bstnod_t*)(cmp<0?nod->proto.left:nod->proto.right);
 	}
 	return -1;
 }
 int bstrmv(bst_t*me, void*key){
-	nod_t*rmvnod = NULL;
-	int notfound = find(&rmvnod, me, key);
+	bstnod_t*rmvnod = NULL;
+	int notfound = bstget(&rmvnod, me, key);
 	if(notfound)return notfound;
-	nod_t *p=rmvnod->parent, *l=rmvnod->left, *r=rmvnod->right;
+	btnod_t
+		*p = rmvnod->proto.parent,
+		*l = rmvnod->proto.left,
+		*r = rmvnod->proto.right,
+		*n;
 	free(rmvnod);
-	if(btdepth((btnod_t*)l)<btdepth((btnod_t*)r)){
+	if(btdepth(l)<btdepth(r)){
 		r->parent = p;
-		btxmost(r,-1)->left = l;
+		btxmost(n=r,-1)->left = l;
 	}else{
 		l->parent = p;
-		btxmost(l, 1)->right = r;
+		btxmost(n=l, 1)->right = r;
 	}
+	if(p==NULL)me->root=(bstnod_t*)n;
 	return 0;
 }
 
