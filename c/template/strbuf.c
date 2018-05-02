@@ -48,7 +48,7 @@ int strbufbuild(char**dest, void*_me){
 	}*dest = '\0';
 	return 0;
 }
-void strbuffree(void*_me){
+void strbufclean(void*_me){
 	strbuf_t*me = (strbuf_t*)_me;
 	for(nod_t*nod=me->first,*next;nod!=NULL;nod=next){
 		next = nod->next;

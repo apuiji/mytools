@@ -7,6 +7,6 @@ extern void*strbufcreate();
 extern size_t strbufleng(void*);
 extern int strbufapp(void*, const char*, size_t);
 extern int strbufbuild(char**, void*);
-extern void strbuffree(void*);
+extern void strbufclean(void*);
 
 #endif//STRBUF
