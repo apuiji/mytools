@@ -4,32 +4,55 @@
 #include<stdlib.h>
 #include<string.h>
 
-int strbufapp(strbuf_t*me, const char*app, size_t len){
-	size_t size = len+1;
-	linked_t*node = (linked_t*)malloc(
-		sizeof(linked_t)+sizeof(size_t)+size);
+typedef struct nod_t nod_t;
+struct nod_t{
+	nod_t*next;
+	size_t length;
+	char cont[0];
+};
+typedef struct{
+	nod_t*first;
+	size_t totalleng;
+	nod_t*tail;
+}strbuf_t;
+
+void*strbufcreate(){
+	strbuf_t*out = (strbuf_t*)malloc(sizeof(strbuf_t));
+	out->first = NULL;
+	out->totalleng = 0;
+	out->tail = (nod_t*)out;
+	return out;
+}
+size_t strbufleng(void*me){
+	return ((strbuf_t*)me)->totalleng;
+}
+int strbufapp(void*_me, const char*app, size_t leng){
+	size_t size = leng+1;
+	nod_t*nod = (nod_t*)malloc(sizeof(nod_t)+size);
 	if(errno)return errno;
-	node->next = NULL;
-	size_t*plen = (size_t*)(node+1);
-	*plen = len;
-	char*pcont = (char*)(plen+1);
-	memcpy(pcont,app,len);	pcont[len]='\0';
-	me->totallen += len;
-	linkedins(me->tail, node, &(me->tail));
+	nod->next = NULL;
+	nod->length = leng;
+	memcpy(nod->cont,app,leng);	nod->cont[leng]='\0';
+	strbuf_t*me = (strbuf_t*)_me;
+	me->totalleng += leng;
+	me->tail = me->tail->next = nod;
 	return 0;
 }
-int strbufbuild(char**dest, strbuf_t*me){
-	*dest = (char*)malloc(me->totallen+1);
+int strbufbuild(char**dest, void*_me){
+	strbuf_t*me = (strbuf_t*)_me;
+	*dest = (char*)malloc(me->totalleng+1);
 	if(errno)return errno;
-	for(linked_t*node=me->head.next;node!=NULL;++node){
-		size_t*plen = (size_t*)(node+1);
-		char*pcont = (char*)(plen+1);
-		memcpy(dest, pcont, *plen);
-		dest += *plen;
+	for(nod_t*nod=me->first;nod!=NULL;nod=nod->next){
+		memcpy(dest, nod->cont, nod->length);
+		dest += nod->length;
 	}*dest = '\0';
 	return 0;
 }
-void strbuffree(strbuf_t*me){
-	for(linked_t*node=me->head.next;node!=NULL;++node)free(node);
+void strbuffree(void*_me){
+	strbuf_t*me = (strbuf_t*)_me;
+	for(nod_t*nod=me->first,*next;nod!=NULL;nod=next){
+		next = nod->next;
+		free(nod);
+	}
 }
 
