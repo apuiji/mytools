@@ -7,6 +7,7 @@ struct btnod_t{
 };
 
 extern int btdepth(btnod_t*);
+extern int btcount(btnod_t*);
 extern btnod_t*btxmost(btnod_t*, int);
 typedef enum{
 	NLR, LNR, LRN, NRL, RNL, RLN,

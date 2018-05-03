@@ -1,11 +1,15 @@
 #include"bintree.h"
 
+#include<errno.h>
 #include<stddef.h>
 
 int btdepth(btnod_t*me){
 	if(me==NULL)return 0;
 	int depthl=btdepth(me->left), depthr=btdepth(me->right);
 	return 1+(depthl>depthr?depthl:depthr);
+}
+int btcount(btnod_t*me){
+	return me!=NULL?1+btcount(me->left)+btcount(me->right):0;
 }
 btnod_t*btxmost(btnod_t*me, int x){
 	x = x<0?1:x>0?2:0;
@@ -43,11 +47,13 @@ int bt4each(btnod_t*tree, bt4each_t how, int(*hdl)(btnod_t*)){
 		(fail=bt4each(tree->left,how,hdl))||
 		(fail=hdl(tree));
 		break;
-	default://NLR
+	case NLR:
 		(fail=hdl(tree))||
 		(fail=bt4each(tree->left,how,hdl))||
 		(fail=bt4each(tree->right,how,hdl));
 		break;
+	default:
+		fail = EINVAL;
 	}
 	return fail;
 }

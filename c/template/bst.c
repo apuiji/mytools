@@ -49,4 +49,24 @@ int bstrmv(bst_t*me, void*key){
 	if(p==NULL)me->root=(bstnod_t*)n;
 	return 0;
 }
+bstnod_t*bstrotate(bstnod_t*tree, int orient){
+	btnod_t*tmp;
+	do{
+		if(tree==NULL)break;
+		if(orient<0){
+			if(tree->left==NULL)break;
+			tmp = tree->left->right;
+			tree->left->right = tree;
+			tree->left = tmp;
+			tree = tree->left;
+		}else if(orient>0){
+			if(tree->right==NULL)break;
+			tmp = tree->right->left;
+			tree->right->left = tree;
+			tree->right = tmp;
+			tree = tree->right;
+		}
+	}while(0);
+	return tree;
+}
 
