@@ -3,12 +3,12 @@
 #include<errno.h>
 #include<stddef.h>
 
-int btdepth(btnod_t*me){
+size_t btdepth(btnod_t*me){
 	if(me==NULL)return 0;
-	int depthl=btdepth(me->left), depthr=btdepth(me->right);
+	size_t depthl=btdepth(me->left), depthr=btdepth(me->right);
 	return 1+(depthl>depthr?depthl:depthr);
 }
-int btcount(btnod_t*me){
+size_t btcount(btnod_t*me){
 	return me!=NULL?1+btcount(me->left)+btcount(me->right):0;
 }
 btnod_t*btxmost(btnod_t*me, int x){
@@ -53,7 +53,7 @@ int bt4each(btnod_t*tree, bt4each_t how, int(*hdl)(btnod_t*)){
 		(fail=bt4each(tree->right,how,hdl));
 		break;
 	default:
-		fail = EINVAL;
+		fail = errno = EINVAL;
 	}
 	return fail;
 }
