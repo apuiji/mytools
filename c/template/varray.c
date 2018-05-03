@@ -13,23 +13,18 @@ static int tryreleng(varray_t*, size_t);
 
 int varrayc(varray_t*me, int i, void*pvalue){
 	if(i<0){
-		int err = tryreleng(me, me->length-i);
-		if(err)return err;
+		if(tryreleng(me,me->length-i))return errno;
 		me->length -= i;
 		memshift(me->point, me->length, -i*me->esize, 0);
 		memcpy(me->point, pvalue, me->esize);
 	}else if(i>=me->length){
-		int err = tryreleng(me, i+1);
-		if(err)return err;
+		if(tryreleng(me, i+1))return errno;
 		void*dest = varrayr(me,i);
-		if(errno)return errno;
 		me->length = i+1;
 		memcpy(dest, pvalue, me->esize);
 	}else{
-		int err = tryreleng(me, me->length+1);
-		if(err)return err;
+		if(tryreleng(me, me->length+1))return errno;
 		void*dest = varrayr(me,i);
-		if(errno)return errno;
 		++me->length;
 		memshift(dest, me->length-i, me->esize, 0);
 		memcpy(dest, pvalue, me->esize);
@@ -43,17 +38,17 @@ void*varrayr(varray_t*me, int i){
 	return out;
 }
 int varrayu(varray_t*me, int i, void*pvalue){
-	void*upd;
-	if(varrayr(&upd,me,i))return errno;
+	void*upd = varrayr(me,i);
+	if(upd==NULL)return errno;
 	memcpy(upd, pvalue, me->esize);
 	return 0;
 }
-int varrayd(varray_t*me, int i, ssize_t length){
+int varrayd(varray_t*me, int i, ssize_t leng){
 	if(length==0)return 0;
-	void*del;
-	if(varrayr(&del,me,i)return errno;
-	length = length<0||i+length>me->length?me->length-i:length;
-	memshift(del, (me->length-=length)-i, -length*me->esize, 0);
+	void*del = varrayr(me,i);
+	if(del==NULL)return errno;
+	if(leng<0||i+leng>me->length)leng=me->length-i;
+	memshift(del, (me->length-=leng)-i, -leng*me->esize, 0);
 	return 0;
 }
 int varrayreleng(varray_t*me, size_t newleng){

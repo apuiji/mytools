@@ -19,7 +19,7 @@ int bstput(bst_t*me, void*item, size_t size){
 }
 static int put(btnod_t**dest, void*item, size_t size){
 	*dest = (btnod_t*)malloc(sizeof(btnod_t)+size);
-	if(errno)return errno;
+	if(*dest==NULL)return errno;
 	memset(*dest, 0, sizeof(btnod_t));
 	memcpy(1+*dest, item, size);
 	return 0;

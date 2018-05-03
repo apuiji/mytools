@@ -18,10 +18,11 @@ typedef struct{
 
 void*strbufcreate(){
 	strbuf_t*out = (strbuf_t*)malloc(sizeof(strbuf_t));
-	if(errno)return NULL;
-	out->first = NULL;
-	out->totalleng = 0;
-	out->tail = (nod_t*)out;
+	if(out!=NULL){
+		out->first = NULL;
+		out->totalleng = 0;
+		out->tail = (nod_t*)out;
+	}
 	return out;
 }
 size_t strbufleng(void*me){
