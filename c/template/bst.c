@@ -33,9 +33,8 @@ btnod_t*bstget(bst_t*me, void*key){
 	return NULL;
 }
 int bstrmv(bst_t*me, void*key){
-	btnod_t*rmvnod = NULL;
-	int notfound = bstget(&rmvnod, me, key);
-	if(notfound)return notfound;
+	btnod_t*rmvnod = bstget(me, key);
+	if(rmvnod==NULL)return errno;
 	btnod_t
 		*p=rmvnod->parent, *l=rmvnod->left, *r=rmvnod->right, *n;
 	free(rmvnod);

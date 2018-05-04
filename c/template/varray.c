@@ -44,7 +44,7 @@ int varrayu(varray_t*me, int i, void*pvalue){
 	return 0;
 }
 int varrayd(varray_t*me, int i, ssize_t leng){
-	if(length==0)return 0;
+	if(leng==0)return 0;
 	void*del = varrayr(me,i);
 	if(del==NULL)return errno;
 	if(leng<0||i+leng>me->length)leng=me->length-i;

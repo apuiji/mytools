@@ -1,6 +1,8 @@
 #ifndef BINTREE
 #define BINTREE
 
+#include<stddef.h>
+
 typedef struct btnod_t btnod_t;
 struct btnod_t{
 	btnod_t *parent, *left, *right;

@@ -1,7 +1,6 @@
 #include"bintree.h"
 
 #include<errno.h>
-#include<stddef.h>
 
 size_t btdepth(btnod_t*me){
 	if(me==NULL)return 0;
