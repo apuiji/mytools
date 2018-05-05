@@ -42,7 +42,7 @@ int strbufapp(void*_me, const char*app, size_t leng){
 }
 int strbufbuild(char**dest, size_t mxleng, void*_me){
 	strbuf_t*me = (strbuf_t*)_me;
-	if(me->totalleng<mxleng)mxleng=me->totalleng;
+	if(me->totalleng<mxleng||mxleng==0)mxleng=me->totalleng;
 	if(*dest==NULL){
 		*dest = (char*)malloc(mxleng+1);
 		if(*dest==NULL)return errno;

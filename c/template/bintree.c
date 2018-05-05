@@ -17,39 +17,32 @@ btnod_t*btxmost(btnod_t*me, int x){
 		if(next==NULL)return(btnod_t*)asarray;
 	}
 }
-int bt4each(btnod_t*tree, bt4each_t how, int(*hdl)(btnod_t*)){
+int bt4each(
+	btnod_t*tree, bt4each_t how,
+	int(*hdl)(btnod_t*, void*), void*param
+){
 	if(tree==NULL)return 0;
 	int fail = 0;
-	switch(how){
+	btnod_t*children[2];{
+		int ilchild = how&0x10?1:0;
+		children[ilchild] = tree->left;
+		children[(ilchild+1)%2] = tree->right;
+	}
+	switch(how&0x0f){
 	case LNR:
-		(fail=bt4each(tree->left,how,hdl))||
-		(fail=hdl(tree))||
-		(fail=bt4each(tree->right,how,hdl));
+		(fail=bt4each(children[0],how,hdl,param))||
+		(fail=hdl(tree,param))||
+		(fail=bt4each(children[1],how,hdl,param));
 		break;
 	case LRN:
-		(fail=bt4each(tree->left,how,hdl))||
-		(fail=bt4each(tree->right,how,hdl))||
-		(fail=hdl(tree));
-		break;
-	case NRL:
-		(fail=hdl(tree))||
-		(fail=bt4each(tree->right,how,hdl))||
-		(fail=bt4each(tree->left,how,hdl));
-		break;
-	case RNL:
-		(fail=bt4each(tree->right,how,hdl))||
-		(fail=hdl(tree))||
-		(fail=bt4each(tree->left,how,hdl));
-		break;
-	case RLN:
-		(fail=bt4each(tree->right,how,hdl))||
-		(fail=bt4each(tree->left,how,hdl))||
-		(fail=hdl(tree));
+		(fail=bt4each(children[0],how,hdl,param))||
+		(fail=bt4each(children[1],how,hdl,param))||
+		(fail=hdl(tree,param));
 		break;
 	case NLR:
-		(fail=hdl(tree))||
-		(fail=bt4each(tree->left,how,hdl))||
-		(fail=bt4each(tree->right,how,hdl));
+		(fail=hdl(tree,param))||
+		(fail=bt4each(children[0],how,hdl,param))||
+		(fail=bt4each(children[1],how,hdl,param));
 		break;
 	default:
 		fail = errno = EINVAL;
