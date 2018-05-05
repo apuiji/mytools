@@ -15,8 +15,8 @@ int varrayc(varray_t*me, int i, void*pvalue){
 	if(i<0){
 		if(tryreleng(me,me->length-i))return errno;
 		me->length -= i;
-		memshift(me->point, me->length, -i*me->esize, 0);
-		memcpy(me->point, pvalue, me->esize);
+		memshift(me->hook, me->length, -i*me->esize, 0);
+		memcpy(me->hook, pvalue, me->esize);
 	}else if(i>=me->length){
 		if(tryreleng(me, i+1))return errno;
 		void*dest = varrayr(me,i);
@@ -34,7 +34,7 @@ int varrayc(varray_t*me, int i, void*pvalue){
 void*varrayr(varray_t*me, int i){
 	void*out = NULL;
 	if(outlength(me,i))errno=ERANGE;
-	else out=me->esize*i+(char*)me->point;
+	else out=me->esize*i+(char*)me->hook;
 	return out;
 }
 int varrayu(varray_t*me, int i, void*pvalue){
@@ -53,9 +53,9 @@ int varrayd(varray_t*me, int i, ssize_t leng){
 }
 int varrayreleng(varray_t*me, size_t newleng){
 	if(newleng==me->mxleng)return 0;
-	void*newpoint = realloc(me->point, newleng);
-	if(newpoint==NULL)return errno;
-	me->point = newpoint;
+	void*newhook = realloc(me->hook, newleng);
+	if(newhook==NULL)return errno;
+	me->hook = newhook;
 	if(newleng<me->mxleng)me->length=newleng;
 	me->mxleng = newleng;
 	return 0;

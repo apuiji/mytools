@@ -4,7 +4,7 @@
 #include<sys/types.h>
 
 typedef struct varray_t{
-	void*point;
+	void*hook;
 	size_t esize, length, mxleng;
 }varray_t;
 

@@ -68,5 +68,7 @@ void strbufclean(void*_me){
 		next = nod->next;
 		free(nod);
 	}
+	me->totalleng = 0;
+	me->first = me->tail = NULL;
 }
 
