@@ -1,6 +1,5 @@
 #include"strbuf.h"
 
-#include<errno.h>
 #include<stdlib.h>
 #include<string.h>
 
@@ -31,7 +30,7 @@ size_t strbufleng(void*me){
 int strbufapp(void*_me, const char*app, size_t leng){
 	size_t size = leng+1;
 	nod_t*nod = (nod_t*)malloc(sizeof(nod_t)+size);
-	if(nod==NULL)return errno;
+	if(nod==NULL)return -1;
 	nod->next = NULL;
 	nod->length = leng;
 	memcpy(nod->cont,app,leng);	nod->cont[leng]='\0';
@@ -45,7 +44,7 @@ int strbufbuild(char**dest, size_t mxleng, void*_me){
 	if(me->totalleng<mxleng||mxleng==0)mxleng=me->totalleng;
 	if(*dest==NULL){
 		*dest = (char*)malloc(mxleng+1);
-		if(*dest==NULL)return errno;
+		if(*dest==NULL)return -1;
 	}
 	size_t totalleng = 0;
 	for(nod_t*nod=me->first,*next;nod!=NULL;nod=next){

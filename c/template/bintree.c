@@ -45,7 +45,8 @@ int bt4each(
 		(fail=bt4each(children[1],how,hdl,param));
 		break;
 	default:
-		fail = errno = EINVAL;
+		errno = EINVAL;
+		fail = -1;
 	}
 	return fail;
 }

@@ -9,7 +9,7 @@ int bstput(bst_t*me, void*item, size_t size){
 	if(me->root==NULL)return put(&(me->root), item, size);
 	for(btnod_t*nod=me->root,**next;1;nod=*next){
 		int cmp = me->cmp(item, nod+1);
-		if(!cmp)return errno=EALREADY;
+		if(!cmp){errno=EALREADY;return -1;}
 		next = cmp<0?&(nod->left):&(nod->right);
 		if(*next!=NULL)continue;
 		int fail = put(next,item,size);
@@ -19,7 +19,7 @@ int bstput(bst_t*me, void*item, size_t size){
 }
 static int put(btnod_t**dest, void*item, size_t size){
 	*dest = (btnod_t*)malloc(sizeof(btnod_t)+size);
-	if(*dest==NULL)return errno;
+	if(*dest==NULL)return -1;
 	memset(*dest, 0, sizeof(btnod_t));
 	memcpy(1+*dest, item, size);
 	return 0;
@@ -34,7 +34,7 @@ btnod_t*bstget(bst_t*me, void*key){
 }
 int bstrmv(bst_t*me, void*key){
 	btnod_t*rmvnod = bstget(me, key);
-	if(rmvnod==NULL)return errno;
+	if(rmvnod==NULL)return -1;
 	btnod_t
 		*p=rmvnod->parent, *l=rmvnod->left, *r=rmvnod->right, *n;
 	free(rmvnod);
