@@ -18,7 +18,7 @@ void*ins(linked_t*me, size_t nodsize, void*item, size_t size){
 	if(nod!=NULL){
 		nod->next = me->next;
 		me->next = nod;
-		memcpy(nodsize+(char*)nod, item, size);
+		if(item!=NULL)memcpy(nodsize+(char*)nod, item, size);
 	}
 	return nod;
 }
