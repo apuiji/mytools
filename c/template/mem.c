@@ -1,7 +1,7 @@
 #include<string.h>
 #include"mem.h"
 
-void memshift(void*p, size_t size, off_t off, int c){
+void memshift(void*p, size_t size, ssize_t off, int c){
 	if(off==0)return;
 	off_t uoff = off<0?-off:off;
 	size -= uoff;
