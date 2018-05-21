@@ -12,23 +12,24 @@ static int tryreleng(varray_t*, size_t);
 
 int varrayc(varray_t*me, int i, void*pvalue){
 	if(i<0){
-		if(tryreleng(me,me->length-i))return -1;
+		if(tryreleng(me,me->length-i))goto ERROR;
 		me->length -= i;
 		memshift(me->hook, me->length, -i*me->esize, 0);
 		memcpy(me->hook, pvalue, me->esize);
 	}else if(i>=me->length){
-		if(tryreleng(me, i+1))return -1;
+		if(tryreleng(me, i+1))goto ERROR;
 		void*dest = varrayr(me,i);
 		me->length = i+1;
 		memcpy(dest, pvalue, me->esize);
 	}else{
-		if(tryreleng(me, me->length+1))return -1;
+		if(tryreleng(me, me->length+1))goto ERROR;
 		void*dest = varrayr(me,i);
 		++me->length;
 		memshift(dest, me->length-i, me->esize, 0);
 		memcpy(dest, pvalue, me->esize);
 	}
 	return 0;
+	ERROR:return -1;
 }
 void*varrayr(varray_t*me, int i){
 	void*out = NULL;
@@ -43,21 +44,24 @@ int varrayu(varray_t*me, int i, void*pvalue){
 	return 0;
 }
 int varrayd(varray_t*me, int i, ssize_t leng){
-	if(leng==0)return 0;
+	if(leng==0)goto OVER;
 	void*del = varrayr(me,i);
-	if(del==NULL)return -1;
+	if(del==NULL)goto ERROR;
 	if(leng<0||i+leng>me->length)leng=me->length-i;
-	memshift(del, (me->length-=leng)-i, -leng*me->esize, 0);
-	return 0;
+	memshift(del, (me->length-i)*me->esize, -leng*me->esize, 0);
+	me->length -= leng;
+	OVER:return 0;
+	ERROR:return -1;
 }
 int varrayreleng(varray_t*me, size_t newleng){
-	if(newleng==me->mxleng)return 0;
+	if(newleng==me->mxleng)goto OVER;
 	void*newhook = realloc(me->hook, newleng);
-	if(newhook==NULL)return -1;
+	if(newhook==NULL)goto ERROR;
 	me->hook = newhook;
 	if(newleng<me->mxleng)me->length=newleng;
 	me->mxleng = newleng;
-	return 0;
+	OVER:return 0;
+	ERROR:return -1;
 }
 
 size_t enoleng(varray_t*me, size_t reqleng){

@@ -31,12 +31,9 @@ dinked_t*dinkedget(dinked_t*me, int i){
 }
 void*get(void*me, int d, int i){
 	if(i==0)return me;
-	if(i<0){
-		if(d)i=-i;
-		else{
-			errno = EINVAL;
-			return NULL;
-		}
+	if(i<0)if(d)i=-i;
+	else{
+		errno=EINVAL;return NULL;
 	}
 	linked_t**asarray = (linked_t**)me;
 	for(;asarray!=NULL;asarray=(linked_t**)asarray[d])

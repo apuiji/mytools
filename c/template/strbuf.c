@@ -7,7 +7,6 @@ typedef struct nod_t nod_t;
 struct nod_t{
 	nod_t*next;
 	size_t length;
-	char cont[0];
 };
 typedef struct{
 	nod_t*first;
@@ -33,7 +32,8 @@ int strbufapp(void*_me, const char*app, size_t leng){
 	if(nod==NULL)return -1;
 	nod->next = NULL;
 	nod->length = leng;
-	memcpy(nod->cont,app,leng);	nod->cont[leng]='\0';
+	char*cont = (char*)(nod+1);
+	memcpy(cont,app,leng);cont[leng]='\0';
 	strbuf_t*me = (strbuf_t*)_me;
 	me->totalleng += leng;
 	me->tail = me->tail->next = nod;
@@ -44,8 +44,9 @@ int strbufbuild(char**dest, size_t mxleng, void*_me){
 	if(me->totalleng<mxleng||mxleng==0)mxleng=me->totalleng;
 	if(*dest==NULL){
 		*dest = (char*)malloc(mxleng+1);
-		if(*dest==NULL)return -1;
+		if(*dest==NULL)goto ERROR;
 	}
+	char*p = *dest;
 	size_t totalleng = 0;
 	for(nod_t*nod=me->first,*next;nod!=NULL;nod=next){
 		size_t leng = nod->length;
@@ -56,10 +57,11 @@ int strbufbuild(char**dest, size_t mxleng, void*_me){
 			totalleng += leng;
 			next = nod->next;
 		}
-		memcpy(dest, nod->cont, leng);
-		dest += leng;
-	}*dest = '\0';
+		memcpy(p, nod+1, leng);
+		p += leng;
+	}*p = '\0';
 	return 0;
+	ERROR:return -1;
 }
 void strbufclean(void*_me){
 	strbuf_t*me = (strbuf_t*)_me;
@@ -70,4 +72,3 @@ void strbufclean(void*_me){
 	me->totalleng = 0;
 	me->first = me->tail = NULL;
 }
-
