@@ -1,5 +1,5 @@
-TARGET:=../libtemplate.a
-MOD:=varray linked bintree bst strbuf
+TARGET:=../libmem.a
+MOD:=mem
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)

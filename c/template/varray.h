@@ -1,5 +1,5 @@
-#ifndef VARRAY
-#define VARRAY
+#ifndef TEMPLATE_VARRAY
+#define TEMPLATE_VARRAY
 
 #include<sys/types.h>
 
@@ -14,4 +14,4 @@ extern int varrayu(varray_t*, int, void*);
 extern int varrayd(varray_t*, int, ssize_t);
 extern int varrayreleng(varray_t*, size_t);
 
-#endif//VARRAY
+#endif//TEMPLATE_VARRAY

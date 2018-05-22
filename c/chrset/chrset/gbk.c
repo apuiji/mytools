@@ -1,17 +1,22 @@
-#include"utf8.h"
+#include"gbk.h"
 
-static size_t c2w(wchar_t*, const char*);
-static size_t w2c(char**, wchar_t);
+static size_t c2wc(wchar_t*, const char*);
+static size_t wc2c(char**, wchar_t);
 const chrset_t chrset_gbk = {
-	c2w:c2w, w2c:w2c
+	c2wc:c2wc, wc2c:wc2c
 };
 
-size_t c2w(wchar_t*to, const char*c){
+size_t c2wc(wchar_t*to, const char*c){
 	size_t chrsize = *c<0?2:1;
-	if(to!=NULL)*to=chrsize>1?chrset_c2w(c):*c;
+	if(to!=NULL)*to=chrsize>1?*(wchar_t)c:*c;
 	return chrsize;
 }
-size_t w2c(char**to, wchar_t wc){
-	
+size_t wc2c(char**to, wchar_t wc){
+	size_t chrsize = wc<0?2:1;
+	if(to!=NULL){
+		if(chrsize>1)*(wchar_t*)to=wc;
+		else *to=(char)wc;
+	}
+	return chrsize;
 }
 

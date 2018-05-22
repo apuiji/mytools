@@ -1,18 +1,18 @@
 #include"utf8.h"
 
-static size_t c2w(wchar_t*, const char*);
-static size_t w2c(char**, wchar_t);
+static size_t c2wc(wchar_t*, const char*);
+static size_t wc2c(char**, wchar_t);
 const chrset_t chrset_utf8 = {
-	c2w:c2w, w2c:w2c
+	c2wc:c2wc, wc2c:wc2c
 };
 
-size_t c2w(wchar_t*to, const char*c){
-	unsigned char uc = *s;
-	if(uc>0xfc)return 6;
-	if(uc>0xf8)return 5;
-	if(uc>0xf0)return 4;
-	if(uc>0xe0)return 3;
-	if(uc>0xc0)return 2;
-	return 1;
+size_t c2wc(wchar_t*to, const char*c){
+	unsigned char uc = *c;
+	size_t chrsize = uc>0xfc?6:uc>0xf8?5:uc>0xf0?4:uc>0xe0?3:uc>0xc0?2:1;
+	if(to!=NULL)switch(chrsize){
+	case 1:*to=*c;break;
+	case 2:
+	}
+	return chrsize;
 }
 

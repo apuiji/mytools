@@ -1,5 +1,5 @@
-#ifndef STRBUF
-#define STRBUF
+#ifndef TEMPLATE_STRBUF
+#define TEMPLATE_STRBUF
 
 #include<stddef.h>
 
@@ -9,4 +9,4 @@ extern int strbufapp(void*, const char*, size_t);
 extern int strbufbuild(char**, size_t, void*);
 extern void strbufclean(void*);
 
-#endif//STRBUF
+#endif//TEMPLATE_STRBUF

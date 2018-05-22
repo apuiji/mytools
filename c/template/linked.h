@@ -1,5 +1,5 @@
-#ifndef LINKED
-#define LINKED
+#ifndef TEMPLATE_LINKED
+#define TEMPLATE_LINKED
 
 #include<stddef.h>
 
@@ -17,4 +17,4 @@ extern dinked_t*dinkedins(linked_t*, void*, size_t);
 extern linked_t*linkedget(linked_t*, int);
 extern dinked_t*dinkedget(dinked_t*, int);
 
-#endif//LINKED
+#endif//TEMPLATE_LINKED

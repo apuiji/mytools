@@ -3,7 +3,7 @@
 #include<errno.h>
 #include<stdlib.h>
 #include<string.h>
-#include"mem.h"
+#include"../mem/shift.h"
 
 #define outlength(me,i) (i<0||i>=me->length)
 #define outmxleng(me,i) (i<0||i>=me->mxleng)

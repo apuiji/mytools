@@ -1,5 +1,5 @@
-#ifndef BST
-#define BST
+#ifndef TEMPLATE_BST
+#define TEMPLATE_BST
 
 #include<stdbool.h>
 #include<stddef.h>
@@ -15,4 +15,4 @@ extern btnod_t*bstget(bst_t*, void*);
 extern int bstrmv(bst_t*, void*);
 extern btnod_t*bstrotate(btnod_t*, int orient);
 
-#endif//BST
+#endif//TEMPLATE_BST
