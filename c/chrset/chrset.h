@@ -18,7 +18,7 @@ extern size_t chrset_strlen(
 	const chrset_t*,
 	const wchar_t*, const wchar_t*,
 	size_t*);
-char*chrset_stridx(const chrset_t*, const char*, int, size_t*);
+extern char*chrset_stridx(const chrset_t*, const char*, int, size_t*);
 
 extern void chrset_s2ls(const chrset_t*, wchar_t**, const char*, size_t);
 extern void chrset_ls2s(const chrset_t*, char**, const wchar_t*, size_t);
