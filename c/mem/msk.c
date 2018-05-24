@@ -10,7 +10,7 @@ void membitdmsk(void*dest, size_t size, ssize_t nof1){
 			return;
 		}
 		size_t rem = size-div8;
-		char*c = rem+(char*)dest;
+		char*c = rem + dest;
 		memset(c--, 0xff, div8);
 		size_t mod8 = (-nof1)&7;
 		if(mod8)for(*c=1;--mod8;)*c=(*c<<1)&1;
@@ -24,7 +24,7 @@ void membitdmsk(void*dest, size_t size, ssize_t nof1){
 		}
 		size_t rem = size-div8;
 		memset(dest, 0xff, div8);
-		char*c = rem+(char*)dest;
+		char*c = rem + dest;
 		size_t mod8 = nof1&7;
 		if(mod8)for(*c=0x80;--mod8;)*c>>=1;
 		else *c = 0;
