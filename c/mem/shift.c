@@ -1,42 +1,43 @@
 #include"../mem.h"
 
-void memshift(void*p, size_t size, ssize_t off, int c){
-	if(off==0)return;
-	if(off<0){
-		memmove(p, (char*)p-off, size+off);
-		memset((char*)p+size+off, c, -off);
-	}else{
-		memmove((char*)p+off, p, size-off);
-		memset(p, c, off);
+#include<string.h>
+
+void memshx(void*dest, const void*src, size_t size, ssize_t nbit){
+	size_t unbit=nbit<0?-nbit:nbit, div8=unbit>>3;
+	unsigned char mod8=unbit&7, ful8=8-mod8, msk, *uc;
+	size -= div8;
+	if(size<0){
+		memset(dest, 0, size);
+		return;
 	}
-}
-void memshiftb(void*p, size_t size, int off, int c){
-	if(!off)return;
-	char msk, overflow, *c=(char*)p;
-	if(off<0){
-		msk = ~memmsk(off=-off);
-		size_t esize;
-		if(size>=sizeof(long)){
-			esize = sizeof(long)
-			*(long*)c = *(long*)c<<off;
-			c+=esize;	size-=esize;
-			while(size>=esize){
-				
+	if(nbit<0){
+		if(div8){
+			memmove(dest, div8+(char*)src, size);
+			memset(size+(char*)dest, 1, div8);
+		}
+		if(mod8){
+			uc = size+(unsigned char*)dest;
+			membitmsk(&msk, 1, mod8);
+			for(unsigned char oflow=0,newoflow,ful8=8-mod8;size;--size){
+				newoflow = (*--uc&msk)>>ful8;
+				*uc<<=mod8; *uc|=oflow;
+				oflow = newoflow;
 			}
 		}
-		while(size>=esize){
-			*()
-			c+=esize;	size-=esize;
+	}else if(nbit>0){
+		uc = div8+(unsigned char*)dest;
+		if(div8){
+			memmove(uc, src, size);
+			memset(dest, 0, div8);
 		}
-		#define GAP(T) if(gap=sizeof(T)-sizeof(char))while(size>sizeof(T)){\
-			*(T*)c = *(T*)c<<off;\
-			c+=gap;	size-=gap;\
-		}else goto OVER;
-		GAP(long)	GAP(int)	GAP(short)
-		#undef GAP
-		OVER:
-	}else{
-		char msk=memmsk(8-off), overflow;
+		if(mod8){
+			membitmsk(&msk, 1, -mod8);
+			for(unsigned char oflow=0,newoflow,ful8=8-mod8;size;--size){
+				newoflow = (*uc++&msk)<<ful8;
+				*uc>>=mod8; *uc|=oflow;
+				oflow = newoflow;
+			}
+		}
 	}
 }
 

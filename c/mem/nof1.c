@@ -1,9 +1,8 @@
 #include"../mem.h"
 
-size_t bytenof1(byte_t B){
+size_t bytenof1(unsigned char B){
 	size_t n = 0;
-	if(B&1)++n;
-	B = B>>>1;
+	for(;B;B>>=1)if(B&1)++n;
 	return n;
 }
 size_t memnof1(void*p, size_t nbyte){

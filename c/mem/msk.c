@@ -2,33 +2,33 @@
 
 #include<string.h>
 
-void membitdmsk(void*p, size_t nbytes, ssize_t nof1){
+void membitdmsk(void*dest, size_t size, ssize_t nof1){
 	if(nof1<0){
-		size_t div8 = -nof1>>3;
-		if(div8>=nbytes){
-			memset(p, 0xff, nbytes);
+		size_t div8 = (-nof1)>>3;
+		if(size<div8){
+			memset(dest, 0xff, size);
 			return;
 		}
-		size_t rem = nbytes-div8;
-		char*c = rem+(char*)p;
+		size_t rem = size-div8;
+		char*c = rem+(char*)dest;
 		memset(c--, 0xff, div8);
-		size_t mod8 = -nof1&7;
+		size_t mod8 = (-nof1)&7;
 		if(mod8)for(*c=1;--mod8;)*c=(*c<<1)&1;
 		else *c = 0;
-		memset(p, 0, rem-1);
+		memset(dest, 0, rem-1);
 	}else if(nof1>0){
 		size_t div8 = nof1>>3;
-		if(div8>=nbytes){
-			memset(p, 0xff, nbytes);
+		if(size<div8){
+			memset(dest, 0xff, size);
 			return;
 		}
-		size_t rem = nbytes-div8;
-		memset(p, 0xff, div8);
-		char*c = rem+(char*)p;
+		size_t rem = size-div8;
+		memset(dest, 0xff, div8);
+		char*c = rem+(char*)dest;
 		size_t mod8 = nof1&7;
-		if(mod8)for(*c=0x80;--mod8;)*c=*c>>1;
+		if(mod8)for(*c=0x80;--mod8;)*c>>=1;
 		else *c = 0;
 		memset(c+1, 0, rem-1);
-	}else memset(p, 0, nbytes);
+	}else memset(dest, 0, size);
 }
 
