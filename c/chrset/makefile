@@ -1,19 +1,13 @@
 TARGET:=../libchrset.a
-MOD:=ascii gbk utf8
-OBJ:=chrset.o $(addprefix chrset/, $(addsuffix .o, $(MOD)))
+MOD:=chrset ascii gbk utf8
+OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
 	ar -rcs $@ $^
 
-debug:chrset.h chrset.c chrset/*.h chrset/*.c
-	gcc -o $@ *.c chrset/*.c -I chrset -g
-
-%.o:%.c %.h
-	gcc -o $@ $< -I chrset -c
-
-clean-debug:
-	rm debug
+%.o:%.c ../chrset.h
+	gcc -o $@ $< -c
 
 clean:
-	rm *.o $(TARGET) debug
+	rm *.o $(TARGET)
 

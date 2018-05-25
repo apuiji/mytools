@@ -76,14 +76,14 @@ char shiftb(unsigned char*p, size_t size, char nb){
 	char oflow4ret, oflow=0, newoflow, remb;
 	if(nb<0){
 		oflow4ret = (p[0]&msk)>>(remb=8-(nb=-nb));
-		for(int i=size-1;i>=0;--i){
+		for(off_t i=size-1;i>=0;--i){
 			newoflow = (p[i]&msk)>>remb;
 			p[i] = (p[i]<<nb)|oflow;
 			oflow = newoflow;
 		}
 	}else{
 		oflow4ret = (p[size-1]&msk)<<(remb=8-nb);
-		for(int i=0;i<size;++i){
+		for(off_t i=0;i<size;++i){
 			newoflow = (p[i]&msk)<<nb;
 			p[i] = (p[i]>>nb)|oflow;
 			oflow = newoflow;

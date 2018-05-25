@@ -5,15 +5,9 @@ OBJ:=$(addsuffix .o, $(MOD))
 $(TARGET):$(OBJ)
 	ar -rcs $@ $^
 
-debug:*.h *.c
-	gcc -o $@ *.c -g
-
-%.o:%.c
+%.o:%.c ../mem.h
 	gcc -o $@ $< -c
 
-clean-debug:
-	rm debug
-
 clean:
-	rm *.o $(TARGET) debug
+	rm *.o $(TARGET)
 
