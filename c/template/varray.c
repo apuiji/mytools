@@ -3,7 +3,7 @@
 #include<errno.h>
 #include<stdlib.h>
 #include<string.h>
-#include"../mem/shift.h"
+#include"../mem.h"
 
 #define outlength(me,i) (i<0||i>=me->length)
 #define outmxleng(me,i) (i<0||i>=me->mxleng)
@@ -14,7 +14,7 @@ int varrayc(varray_t*me, int i, void*pvalue){
 	if(i<0){
 		if(tryreleng(me,me->length-i))goto ERROR;
 		me->length -= i;
-		memshift(me->hook, me->length, -i*me->esize, 0);
+		memshl(me->hook, me->hook, me->length, (i*me->esize)<<3);
 		memcpy(me->hook, pvalue, me->esize);
 	}else if(i>=me->length){
 		if(tryreleng(me, i+1))goto ERROR;
@@ -25,7 +25,7 @@ int varrayc(varray_t*me, int i, void*pvalue){
 		if(tryreleng(me, me->length+1))goto ERROR;
 		void*dest = varrayr(me,i);
 		++me->length;
-		memshift(dest, me->length-i, me->esize, 0);
+		memshr(dest, dest, me->length-i, me->esize<<3);
 		memcpy(dest, pvalue, me->esize);
 	}
 	return 0;
@@ -48,7 +48,7 @@ int varrayd(varray_t*me, int i, ssize_t leng){
 	void*del = varrayr(me,i);
 	if(del==NULL)goto ERROR;
 	if(leng<0||i+leng>me->length)leng=me->length-i;
-	memshift(del, (me->length-i)*me->esize, -leng*me->esize, 0);
+	memshl(del, del, (me->length-i)*me->esize, (leng*me->esize)<<3);
 	me->length -= leng;
 	OVER:return 0;
 	ERROR:return -1;
