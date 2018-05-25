@@ -8,7 +8,8 @@ static char shiftb(unsigned char*, size_t, char);
 void*memshift(
 	void*dest, const void*src, size_t size, size_t nb, memshiftop op
 ){
-	/*bool ismalloc = false;
+	if(!size)goto END;
+	bool ismalloc = false;
 	if(!dest){
 		dest = malloc(size);
 		if(!dest)goto END;
@@ -67,14 +68,27 @@ void*memshift(
 				}
 			}
 		}
-	}*/
-	return dest;
+	}
+	END:return dest;
 }
 char shiftb(unsigned char*p, size_t size, char nb){
 	char msk; membitmsk(&msk,1,-nb);
-	char oflow = nb<0?(p[0]&msk):(p[size-1]&msk);
-	if(nb<0)while(size)p[--size]<<=-nb;
-	else while(size)p[--size]>>=nb;
-	return oflow;
+	char oflow4ret, oflow=0, newoflow, remb;
+	if(nb<0){
+		oflow4ret = (p[0]&msk)>>(remb=8-(nb=-nb));
+		for(int i=size-1;i>=0;--i){
+			newoflow = (p[i]&msk)>>remb;
+			p[i] = (p[i]<<nb)|oflow;
+			oflow = newoflow;
+		}
+	}else{
+		oflow4ret = (p[size-1]&msk)<<(remb=8-nb);
+		for(int i=0;i<size;++i){
+			newoflow = (p[i]&msk)<<nb;
+			p[i] = (p[i]>>nb)|oflow;
+			oflow = newoflow;
+		}
+	}
+	return oflow4ret;
 }
 
