@@ -1,5 +1,5 @@
 TARGET:=../libmem.a
-MOD:=mem
+MOD:=nof1 bitmsk bitlogic shift
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
@@ -8,7 +8,7 @@ $(TARGET):$(OBJ)
 debug:*.h *.c
 	gcc -o $@ *.c -g
 
-%.o:%.c %.h
+%.o:%.c
 	gcc -o $@ $< -c
 
 clean-debug:

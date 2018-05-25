@@ -1,70 +1,80 @@
 #include"../mem.h"
 
+#include<stdbool.h>
+#include<stdlib.h>
 #include<string.h>
 
-typedef struct{
-	char*dest; const char*src;
-	size_t size; size_t div8, rem8;
-	unsigned char mod8, ful8;
-	char dir, type;
-}ctx_t;
-void memshift(
-	void*dest, const void*src, size_t size,
-	size_t nbit, int dir_type
+static char shiftb(unsigned char*, size_t, char);
+void*memshift(
+	void*dest, const void*src, size_t size, size_t nb, memshiftop op
 ){
-	ctx_t ctx = {
-		dest:dest, src:src,
-		size:size, div8:nbit>>3, mod8:nbit&7,
-		dir:dir_type&0x10, type:ctx->dir_type&0xf,
-	};
-	ctx->rem8=size-ctx->mod8;	ctx->ful8=8-ctx->mod8;
-	void(*fn)(ctx_t*);
-	switch(dir_type&0x0f){
-	case 0:
-	case 1:fn=shx;break;
-	case 2:fn=rox;break;
-	case 3:fn=rcx;break;
-	default:return;
+	/*bool ismalloc = false;
+	if(!dest){
+		dest = malloc(size);
+		if(!dest)goto END;
+		ismalloc = true;
 	}
-	fn(&ctx);
-}
-static void shx(ctx_t*ctx){
-	size_t rem8 = ctx->rem8;
-	if(rem8<0){
-		memset(ctx->dest, 0, ctx->size);
-		return;
-	}
-	if(ctx->dir){
-		unsigned char*uc = ctx->dest+ctx->div8;
-		if(ctx->div8){
-			memmove(uc, src, rem8);
-			memset(ctx->dest, ctx->type?0xff:0, ctx->div8);
-		}
-		if(ctx->mod8){
-			unsigned char msk;membitmsk(&msk,1,-ctx->mod8);
-			for(unsigned char oflow=0,newoflow;rem8;--rem8){
-				newoflow = (*uc++&msk)<<ful8;
-				*uc>>=mod8; *uc|=oflow;
-				oflow = newoflow;
+	unsigned char dir=(op&0x10)>>4, type=op&3;
+	size_t nB=nb>>3, remB;
+	nb = nb&7;
+	if(type>1){
+		nB%=size; remB=size-nB;
+		if(nB){
+			char*tmp = malloc(nB);
+			if(tmp==NULL){
+				if(ismalloc)free(tmp);
+				goto END;
 			}
+			if(dir){
+				memcpy(tmp, src+remB, nB);
+				memmove(dest+nB, src, remB);
+				memcpy(dest, tmp, nB);
+			}else{
+				memcpy(tmp, src, nB);
+				memmove(dest, src+nB, remB);
+				memcpy(dest+remB, tmp, nB);
+			}
+			free(tmp);
+		}
+		if(nb){
+			if(dir)
+				*(char*)dest|=shiftb(dest, size, nb);
+			else
+				*(char*)(dest+size-1)|=shiftb(dest, size, -nb);
 		}
 	}else{
-		if(ctx->div8){
-			memmove(ctx->dest, ctx->src+ctx->div8, rem8);
-			memset(ctx->dest+rem8, 0, ctx->div8);
-		}
-		if(ctx->mod8){
-			unsigned char msk, *uc=ctx->dest+ctx->rem8;
-			membitmsk(&msk, 1, ctx->mod8);
-			for(unsigned char oflow=0,newoflow;rem8;--rem8){
-				newoflow = (*--uc&msk)>>ctx->ful8;
-				*uc<<=ctx->mod8; *uc|=oflow;
-				oflow = newoflow;
+		char set = (
+			(op==(memshiftop)SAR) &&
+			(0x80&*(char*)src)
+		)?0xff:0;
+		if((remB=size-nB)<0){
+			memset(dest, set, size);
+		}else{
+			if(nB){
+				if(dir){
+					memmove(dest+nB, src, remB);
+					memset(dest, set, nB);
+					if(nb){
+						shiftb(dest+nB, remB, nb);
+						char msk; membitmsk(&msk,1,nb);
+						if(set)*(char*)(dest+nB)|=msk;
+						else *(char*)(dest+nB)&=~msk;
+					}
+				}else{
+					memmove(dest, src+nB, remB);
+					memset(dest+remB, set, nB);
+					if(nb)shiftb(dest, remB, -nb);
+				}
 			}
 		}
-	}
+	}*/
+	return dest;
 }
-static void rox(ctx_t*ctx){
-	
+char shiftb(unsigned char*p, size_t size, char nb){
+	char msk; membitmsk(&msk,1,-nb);
+	char oflow = nb<0?(p[0]&msk):(p[size-1]&msk);
+	if(nb<0)while(size)p[--size]<<=-nb;
+	else while(size)p[--size]>>=nb;
+	return oflow;
 }
 
