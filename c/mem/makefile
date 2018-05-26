@@ -1,5 +1,5 @@
 TARGET:=../libmem.a
-MOD:=nof1 bitmsk bitlogic shift
+MOD:=nof1 bitmsk bitlogic shift endian
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)

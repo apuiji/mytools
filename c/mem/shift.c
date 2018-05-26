@@ -4,91 +4,90 @@
 #include<stdlib.h>
 #include<string.h>
 
-static char shiftb(unsigned char*, size_t, char);
-void*memshift(
-	void*dest, const void*src, size_t size, size_t nb, memshiftop op
-){
-	if(!size)goto END;
-	bool ismalloc = false;
-	if(!dest){
-		dest = malloc(size);
-		if(!dest)goto END;
-		ismalloc = true;
-	}
-	unsigned char dir=(op&0x10)>>4, type=op&3;
-	size_t nB=nb>>3, remB;
-	nb = nb&7;
+int memshiftB(const memshift_ctx*ctx, size_t nB){
+	size_t rem;
+	unsigned char dir=(ctx->op&0x10)>>4, type=ctx->op&3;
 	if(type>1){
-		nB%=size; remB=size-nB;
-		if(nB){
-			char*tmp = malloc(nB);
-			if(tmp==NULL){
-				if(ismalloc)free(tmp);
-				goto END;
-			}
-			if(dir){
-				memcpy(tmp, src+remB, nB);
-				memmove(dest+nB, src, remB);
-				memcpy(dest, tmp, nB);
-			}else{
-				memcpy(tmp, src, nB);
-				memmove(dest, src+nB, remB);
-				memcpy(dest+remB, tmp, nB);
-			}
-			free(tmp);
-		}
-		if(nb){
-			if(dir)
-				*(char*)dest|=shiftb(dest, size, nb);
-			else
-				*(char*)(dest+size-1)|=shiftb(dest, size, -nb);
-		}
-	}else{
-		char set = (
-			(op==(memshiftop)SAR) &&
-			(0x80&*(char*)src)
-		)?0xff:0;
-		if((remB=size-nB)<0){
-			memset(dest, set, size);
+		nB%=ctx->size; rem=ctx->size-nB;
+		char*tmp = malloc(nB);
+		if(!tmp)return -1;
+		if(dir){
+			memcpy(tmp, ctx->src+rem, nB);
+			memmove(ctx->dest+nB, ctx->src, rem);
+			memcpy(ctx->dest, tmp, nB);
 		}else{
-			if(nB){
-				if(dir){
-					memmove(dest+nB, src, remB);
-					memset(dest, set, nB);
-					if(nb){
-						shiftb(dest+nB, remB, nb);
-						char msk; membitmsk(&msk,1,nb);
-						if(set)*(char*)(dest+nB)|=msk;
-						else *(char*)(dest+nB)&=~msk;
-					}
-				}else{
-					memmove(dest, src+nB, remB);
-					memset(dest+remB, set, nB);
-					if(nb)shiftb(dest, remB, -nb);
-				}
+			memcpy(tmp, ctx->src, nB);
+			memmove(ctx->dest, ctx->src+nB, rem);
+			memcpy(ctx->dest+rem, tmp, nB);
+		}
+		free(tmp);
+	}else{
+		char fill = ctx->op==SAR&&(0x80&*(char*)ctx->src)?0xff:0;
+		if(ctx->size<nB)memset(ctx->dest,fill,ctx->size);else{
+			rem = ctx->size-nB;
+			if(dir){
+				memmove(ctx->dest+nB, ctx->src, rem);
+				memset(ctx->dest, fill, nB);
+			}else{
+				memmove(ctx->dest, ctx->src+nB, rem);
+				memset(ctx->dest+rem, fill, nB);
 			}
 		}
 	}
-	END:return dest;
+	return 0;
 }
-char shiftb(unsigned char*p, size_t size, char nb){
-	char msk; membitmsk(&msk,1,-nb);
-	char oflow4ret, oflow=0, newoflow, remb;
-	if(nb<0){
-		oflow4ret = (p[0]&msk)>>(remb=8-(nb=-nb));
-		for(off_t i=size-1;i>=0;--i){
-			newoflow = (p[i]&msk)>>remb;
-			p[i] = (p[i]<<nb)|oflow;
-			oflow = newoflow;
+int memshiftb(const memshift_ctx*ctx, size_t nb){
+	size_t nB=nb>>3;
+	if(nB)if(memshiftB(ctx,nB))return -1;
+	if(!(nb&=7))goto END;
+	unsigned char dir=(ctx->op&0x10)>>4, type=ctx->op&3;
+	unsigned char remb=8-nb, msk, oflo, newoflo, *c;
+	size_t size;
+	if(type>1){
+		size = ctx->size;
+		if(dir){
+			c = ctx->dest;
+			membitmsk(&msk, 1, -nb);
+			for(oflo=(msk&c[ctx->size-1])<<remb;size;--size){
+				newoflo = (msk&*c)<<remb;
+				*c = (*c>>nb)|oflo;
+				oflo=newoflo; ++c;
+			}
+		}else{
+			c = ctx->dest+size-1;
+			membitmsk(&msk, 1, nb);
+			for(oflo=(msk&*(char*)ctx->dest)>>remb;size;--size){
+				newoflo = (msk&*c)>>remb;
+				*c = (*c<<nb)|oflo;
+				oflo=newoflo; --c;
+			}
 		}
-	}else{
-		oflow4ret = (p[size-1]&msk)<<(remb=8-nb);
-		for(off_t i=0;i<size;++i){
-			newoflow = (p[i]&msk)<<nb;
-			p[i] = (p[i]>>nb)|oflow;
-			oflow = newoflow;
+	}else if(ctx->size<nB);else{
+		size = ctx->size-nB;
+		if(dir){
+			c = ctx->dest+nB;
+			membitmsk(&msk, 1, -nb);
+			for(
+				oflo=ctx->op==SAR&&(0x80&*(char*)ctx->src)?(0xff&msk)<<remb:0;
+				size;--size
+			){
+				newoflo = (msk&*c)<<remb;
+				*c = (*c>>nb)|oflo;
+				oflo=newoflo; ++c;
+			}
+		}else{
+			c = ctx->dest+size;
+			membitmsk(&msk, 1, nb);
+			for(oflo=0;size;--size){
+				newoflo = (msk&*c)>>remb;
+				*c = (*c<<nb)|oflo;
+				oflo=newoflo; --c;
+			}
 		}
 	}
-	return oflow4ret;
+	END:return 0;
+}
+int memshiftt(const memshift_ctx*ctx, size_t nb){
+	return 0;
 }
 
