@@ -18,7 +18,7 @@ char*chrset_idxifwcs(const chrset_t*me, const char*str, size_t size, off_t i){
 	for(;i&&*str;--i)if(j>=size)return NULL;else{
 		chrsize=me->c2wc(NULL,str); j+=chrsize; str+=chrsize;
 	}
-	return str;
+	return (char*)str;
 }
 
 int chrset_str2wcs(
@@ -36,10 +36,8 @@ int chrset_str2wcs(
 		if(vlarr_c(&wcs,wcs.length,&wc))goto FREE;
 		str += chrsize;
 	}
-	if(
-		vlarr_c(&wcs,wcs.length,&(wc=0))||
-		vlarr_releng(&wcs,wcs.length)
-	)goto FREE;
+	wc = 0;
+	if(vlarr_c(&wcs,wcs.length,&wc)||vlarr_releng(&wcs,wcs.length))goto FREE;
 	*outwcs=wcs.hook; *outleng=wcs.length;
 	return 0;
 	FREE:free(wcs.hook);
@@ -58,7 +56,7 @@ int chrset_wcs2str(
 	for(;i<leng&&*wcs;++i){
 		chrsize = me->wc2c(NULL,*wcs);
 		if(vlarr_releng(&str,str.length+chrsize))goto FREE;
-		me->wc2c(str.hook+str.length-chrsize, *wcs, chrsize);
+		me->wc2c(str.hook+str.length-chrsize, *wcs);
 		++wcs;
 	}
 	if(

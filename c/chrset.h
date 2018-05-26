@@ -2,6 +2,7 @@
 #define CHRSET
 
 #include<stddef.h>
+#include<sys/types.h>
 #include<wchar.h>
 
 typedef struct{

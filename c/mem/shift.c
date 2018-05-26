@@ -45,24 +45,26 @@ void*memshift(
 		}
 	}else{
 		char set = op==SAR&&(0x80&*(char*)src)?0xff:0;
-		if((remB=size-nB)<0){
+		if(size<nB){
 			memset(dest, set, size);
 		}else{
+			remB = size-nB;
 			if(nB){
 				if(dir){
 					memmove(dest+nB, src, remB);
 					memset(dest, set, nB);
-					if(nb){
-						shiftb(dest+nB, remB, nb);
-						char msk; membitmsk(&msk,1,nb);
-						if(set)*(char*)(dest+nB)|=msk;
-						else *(char*)(dest+nB)&=~msk;
-					}
 				}else{
 					memmove(dest, src+nB, remB);
 					memset(dest+remB, set, nB);
-					if(nb)shiftb(dest, remB, -nb);
 				}
+			}
+			if(nb){
+				if(dir){
+					shiftb(dest+nB, remB, nb);
+					char msk; membitmsk(&msk,1,nb);
+					if(set)*(char*)(dest+nB)|=msk;
+					else *(char*)(dest+nB)&=~msk;
+				}else shiftb(dest,remB,-nb);
 			}
 		}
 	}
@@ -81,7 +83,7 @@ char shiftb(unsigned char*p, size_t size, char nb){
 	}else{
 		oflow4ret = (p[size-1]&msk)<<(remb=8-nb);
 		for(off_t i=0;i<size;++i){
-			newoflow = (p[i]&msk)<<nb;
+			newoflow = (p[i]&msk)<<remb;
 			p[i] = (p[i]>>nb)|oflow;
 			oflow = newoflow;
 		}
