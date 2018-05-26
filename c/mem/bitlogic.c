@@ -4,7 +4,7 @@
 
 void*membitlogic(
 	void*dest, const void*src1, const void*src2, size_t size,
-	membitlogicop op
+	membitlogic_op op
 ){
 	if(!dest)if(!(dest=malloc(size)))goto END;
 	#define TMP(T) for(size_t n##T=size/sizeof(T);n##T;--n##T){\

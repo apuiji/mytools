@@ -30,8 +30,8 @@ extern void*membitmsk(void*, size_t, ssize_t);
 
 typedef enum{
 	AND, OR, NOT, XOR,
-}membitlogicop;
-extern void*membitlogic(void*,const void*,const void*,size_t,membitlogicop);
+}membitlogic_op;
+extern void*membitlogic(void*,const void*,const void*,size_t,membitlogic_op);
 #define membitand(dest,src1,src2,size) membitlogic(dest,src1,src2,size,AND)
 #define membitor(dest,src1,src2,size) membitlogic(dest,src1,src2,size,OR)
 #define membitnot(dest,src,size) membitlogic(dest,src,NULL,size,NOT)
@@ -40,13 +40,19 @@ extern void*membitlogic(void*,const void*,const void*,size_t,membitlogicop);
 typedef enum{
 	SHL=0x00, SAL=0x01, ROL=0x02,
 	SHR=0x10, SAR=0x11, ROR=0x12,
-}memshiftop;
-extern void*memshift(void*, const void*, size_t, size_t, memshiftop);
-#define memshl(dest,src,size,nbit) memshift(dest,src,size,nbit,SHL)
-#define memshr(dest,src,size,nbit) memshift(dest,src,size,nbit,SHR)
-#define memsal(dest,src,size,nbit) memshift(dest,src,size,nbit,SAL)
-#define memsar(dest,src,size,nbit) memshift(dest,src,size,nbit,SAR)
-#define memrol(dest,src,size,nbit) memshift(dest,src,size,nbit,ROL)
-#define memror(dest,src,size,nbit) memshift(dest,src,size,nbit,ROR)
+}memshift_op;
+extern void*memshift(void*, const void*, size_t, size_t, memshift_op);
+#define memshl(dest,src,size,nb) memshift(dest,src,size,nb,SHL)
+#define memsal(dest,src,size,nb) memshift(dest,src,size,nb,SAL)
+#define memrol(dest,src,size,nb) memshift(dest,src,size,nb,ROL)
+#define memshr(dest,src,size,nb) memshift(dest,src,size,nb,SHR)
+#define memsar(dest,src,size,nb) memshift(dest,src,size,nb,SAR)
+#define memror(dest,src,size,nb) memshift(dest,src,size,nb,ROR)
+
+enum memendian{
+	LITTLE=-1, BIG=1,
+};
+extern enum memendian memendian();
+extern void*memendianrvs(void*, const void*, size_t);
 
 #endif//MEM
