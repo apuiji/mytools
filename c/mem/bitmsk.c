@@ -34,7 +34,7 @@ void*membitmsk(void*dest, size_t size, ssize_t nof1){
 char cbitmsk(char nof1){
 	char msk;
 	if(nof1<-7||nof1>7)msk=0xff;
-	else if(nof1<0)for(msk=0x01;++nof1;)msk=(msk<<1)&1;
+	else if(nof1<0)for(msk=0x01;++nof1;)msk=(msk<<1)|1;
 	else if(nof1>0)for(msk=0x80;--nof1;)msk>>=1;
 	else msk=0;
 	return msk;

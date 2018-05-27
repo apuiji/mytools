@@ -49,13 +49,16 @@ unsigned char wc2c(char**to, wchar_t wc){
 	if(chrsize==1){
 		**to=wc; goto END;
 	}
-	wc <<= (sizeof(wchar_t)<<3)-nchcd;
-	char msk1; membitmsk(&msk1, 1, chrsize);
-	char msk2; membitmsk(&msk2, 1, chrsize-7);
-	**to = msk1|(wc>>(sizeof(wchar_t)-7+chrsize))&msk2;
-	wc <<= chrsize+1;
-	for(char i=1,shift=(char)sizeof(wchar_t)-6,*c=1+*to;i<chrsize;++i){
-		*c=0x80|(wc>>shift)&0x3f; wc<<=6; ++c;
+	char nbofwc = sizeof(wchar_t)<<3;
+	wc <<= nbofwc-nchcd;
+	{
+		char shift = 7-chrsize;
+		char msk1; membitmsk(&msk1, 1, chrsize);
+		char msk2; membitmsk(&msk2, 1, -shift);
+		**to = msk1|(wc>>(nbofwc-shift))&msk2;
+		wc<<=shift;
+	}for(char i=1,fix=nbofwc-6,*c=1+*to;i<chrsize;++i){
+		*c = 0x80|(wc>>fix)&0x3f; wc<<=6; ++c;
 	}
 	END:return chrsize;
 }
