@@ -13,6 +13,8 @@ int string_fty_app(string_fty*me, const char*app, size_t leng){
 	if(!nod)return -1;
 	size_t*nodleng = (size_t*)(nod+1);
 	*nodleng=leng; memcpy(nodleng+1,app,leng);
+	me->totalleng += leng;
+	me->endian.prev = (linked_t*)nod;
 	return 0;
 }
 char*string_fty_join(char*dest, size_t mxleng, string_fty*me, bool with0){
