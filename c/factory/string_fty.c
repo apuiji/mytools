@@ -1,12 +1,9 @@
-#include"stringfty.h"
+#include"string_fty.h"
 
 #include<stdlib.h>
 #include<string.h>
 
 void string_fty_init(string_fty*me){
-	for(linked_t*nod=me->endian.next,*next;nod;nod=next){
-		next=nod->next; free(nod);
-	}
 	me->endian.next = NULL;
 	me->endian.prev = (void*)me;
 	me->totalleng = 0;
@@ -32,5 +29,10 @@ char*string_fty_join(char*dest, size_t mxleng, string_fty*me, bool with0){
 		memcpy(p,nodleng+1,leng); p+=leng;
 	}if(with0)*p='\0';
 	END:return dest;
+}
+void string_fty_clean(string_fty*me){
+	for(linked_t*nod=me->endian.next,*next;nod;nod=next){
+		next=nod->next; free(nod);
+	}string_fty_init(me);
 }
 

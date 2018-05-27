@@ -1,5 +1,5 @@
 TARGET:=../libfactory.a
-MOD:=stringfty bitsfty
+MOD:=string_fty bits_fty
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
