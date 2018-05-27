@@ -17,16 +17,20 @@ unsigned char c2wc(wchar_t*to, const char*c){
 	if(chrsize==1){
 		*to=*c; goto END;
 	}
-	char i=0, j=chrsize-1, k=j, tmp[6];
-	memcpy(tmp,c,chrsize);
-	for(char*dest=tmp+j;i<k;dest=tmp+--j)memshl(dest,dest,++i,2);
-	memshl(tmp, tmp, chrsize, chrsize+1);
-	memshr(tmp, tmp, 6, (i<<1)+chrsize+1);
-	*to=0; char gap=chrsize-sizeof(wchar_t);
-	if(gap<0)
-		memcpy(-gap+(char*)to, tmp, chrsize);
-	else
-		memcpy(to, tmp+gap, sizeof(wchar_t));
+	char tmp[6]; memcpy(tmp,c,chrsize);
+	{//var tmp : 6b-size charCode in big-endian-mode
+		char i = 0;
+		for(char j=chrsize-1,k=j,*dest=tmp+j;i<k;dest=tmp+--j)
+			memshl(dest,dest,++i,2);
+		memshl(tmp, tmp, chrsize, chrsize+1);
+		memshr(tmp, tmp, 6, (i<<1)+chrsize+1);
+	}*to=0;{//copy tmp to *to as a big-endian-mode wchar_t
+		char gap=chrsize-sizeof(wchar_t);
+		if(gap<0)
+			memcpy(-gap+(char*)to, tmp, chrsize);
+		else
+			memcpy(to, tmp+gap, sizeof(wchar_t));
+	}
 	if(memendian()<0)memendianrvs(to, to, sizeof(wchar_t));
 	END:return chrsize;
 }
@@ -45,21 +49,21 @@ unsigned char wc2c(char**to, wchar_t wc){
 	}else{
 		chrsize=6; nchcd=31;
 	}
-	if(!to)goto END;
-	if(chrsize==1){
-		**to=wc; goto END;
-	}
-	char nbofwc = sizeof(wchar_t)<<3;
-	wc <<= nbofwc-nchcd;
-	{
+	if(to)if(chrsize==1)**to=wc;else{
+		//consider wc as a left-out bit-stream
+		char nbofwc = sizeof(wchar_t)<<3;
+		wc <<= nbofwc-nchcd;
+		//export count-mask in 1st char
 		char shift = 7-chrsize;
 		char msk1; membitmsk(&msk1, 1, chrsize);
 		char msk2; membitmsk(&msk2, 1, -shift);
 		**to = msk1|(wc>>(nbofwc-shift))&msk2;
 		wc<<=shift;
-	}for(char i=1,fix=nbofwc-6,*c=1+*to;i<chrsize;++i){
-		*c = 0x80|(wc>>fix)&0x3f; wc<<=6; ++c;
+		//export charCode to chars
+		for(char i=1,fix=nbofwc-6,*c=1+*to;i<chrsize;++i){
+			*c = 0x80|(wc>>fix)&0x3f; wc<<=6; ++c;
+		}
 	}
-	END:return chrsize;
+	return chrsize;
 }
 

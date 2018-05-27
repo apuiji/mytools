@@ -3,13 +3,16 @@
 
 #include<stdbool.h>
 #include<stddef.h>
+#include"../template/linked.h"
+#include"../template/stack.h"
 
-extern void*stringfty_create();
-extern size_t stringfty_leng(void*);
-extern int stringfty_app(void*, const char*, size_t);
-extern void stringfty_undo(void*);
-extern void stringfty_redo(void*);
-extern char*stringfty_build(char*, size_t, void*, bool);
-extern void stringfty_clean(void*);
+typedef struct{
+	dinked_t endian;
+	size_t totalleng;
+}string_fty;
 
-#endif//STREAM_STRING
+extern void string_fty_init(string_fty*);
+extern int string_fty_app(string_fty*, const char*, size_t);
+extern char*string_fty_join(char*, size_t, string_fty*, bool);
+
+#endif//FACTORY_STRING

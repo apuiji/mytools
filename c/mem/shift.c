@@ -18,9 +18,9 @@ void*memshift(
 	unsigned char dir=(op&0x10)>>4, type=op&3;
 	size_t nB=nb>>3, remB;
 	nb = nb&7;
-	if(type>1){
+	if(type>1){//if ROLL-SHIFT
 		nB%=size; remB=size-nB;
-		if(nB){
+		if(nB){//base Byte
 			char*tmp = malloc(nB);
 			if(tmp==NULL){
 				if(ismalloc)free(tmp);
@@ -36,20 +36,19 @@ void*memshift(
 				memcpy(dest+remB, tmp, nB);
 			}
 			free(tmp);
-		}
-		if(nb){
+		}if(nb){//base bit
 			if(dir)
 				*(char*)dest|=shiftb(dest, size, nb);
 			else
 				*(char*)(dest+size-1)|=shiftb(dest, size, -nb);
 		}
-	}else{
+	}else{//if SHL(R)|SAL(R)
 		char set = op==SAR&&(0x80&*(char*)src)?0xff:0;
 		if(size<nB){
 			memset(dest, set, size);
 		}else{
 			remB = size-nB;
-			if(nB){
+			if(nB){//base Byte
 				if(dir){
 					memmove(dest+nB, src, remB);
 					memset(dest, set, nB);
@@ -57,8 +56,7 @@ void*memshift(
 					memmove(dest, src+nB, remB);
 					memset(dest+remB, set, nB);
 				}
-			}
-			if(nb){
+			}if(nb){//base bit
 				if(dir){
 					shiftb(dest+nB, remB, nb);
 					char msk; membitmsk(&msk,1,nb);
@@ -70,7 +68,7 @@ void*memshift(
 	}
 	END:return dest;
 }
-char shiftb(unsigned char*p, size_t size, char nb){
+char shiftb(unsigned char*p, size_t size, char nb){//implement of shift base bit
 	char msk; membitmsk(&msk,1,-nb);
 	char oflow4ret, oflow=0, newoflow, remb;
 	if(nb<0){
