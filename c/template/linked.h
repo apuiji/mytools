@@ -12,8 +12,8 @@ struct dinked_t{
 	linked_t *next, *prev;
 };
 
-extern linked_t*linkedins(linked_t*, void*, size_t);
-extern dinked_t*dinkedins(linked_t*, void*, size_t);
+extern linked_t*linkedins(linked_t*, const void*, size_t);
+extern dinked_t*dinkedins(linked_t*, const void*, size_t);
 extern linked_t*linkedget(linked_t*, int);
 extern dinked_t*dinkedget(dinked_t*, int);
 
