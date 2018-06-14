@@ -1,5 +1,5 @@
 TARGET:=../libtemplate.a
-MOD:=vlarr linked stack bintree bst
+MOD:=bintree bst linked_list
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
