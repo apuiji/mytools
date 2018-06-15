@@ -1,4 +1,4 @@
-#include"linked_list.h"
+#include"linked_iter.h"
 
 #include<stdlib.h>
 #include<string.h>
@@ -7,7 +7,7 @@ typedef struct{
 	void *next, *prev;
 }node_t;
 
-void*linked_list_next(void*me, int i){
+void*linked_iter_next(void*me, int i){
 	int j, k;
 	if(i<0)j=1,k=-i;
 	else j=0,k=i;
@@ -18,7 +18,7 @@ void*linked_list_next(void*me, int i){
 	}
 	return n[2];
 }
-void*linked_list_insert(void*me, snake_t value, int how){
+void*linked_iter_insert(void*me, snake_t value, int how){
 	node_t*ins = (node_t*)malloc(sizeof(node_t)+value.size);
 	if(!ins)return NULL;
 	void*data = ins+1;
@@ -34,7 +34,7 @@ void*linked_list_insert(void*me, snake_t value, int how){
 	}else ins->next=ins->prev=NULL;
 	return data;
 }
-void*linked_list_remove(void*me, int how){
+void*linked_iter_remove(void*me, int how){
 	if(!me)return NULL;
 	node_t*cur = (node_t*)me-1;
 	int i, j;
