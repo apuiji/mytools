@@ -1,5 +1,5 @@
-TARGET:=../libtemplate.a
-MOD:=bintree bst linked_list
+TARGET:=../libtmpl.a
+MOD:=bintree bst linked_iter
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)
