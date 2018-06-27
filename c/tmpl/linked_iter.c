@@ -19,10 +19,10 @@ void*linked_iter_next(void*me, int i){
 	return n[2];
 }
 void*linked_iter_insert(void*me, snake_t value, int how){
-	node_t*ins = (node_t*)malloc(sizeof(node_t)+value.size);
+	node_t*ins = (node_t*)malloc(sizeof(node_t)+value.count);
 	if(!ins)return NULL;
 	void*data = ins+1;
-	if(value.hook)memcpy(data,value.hook,value.size);
+	if(value.hook)memcpy(data,value.hook,value.count);
 	if(me){
 		node_t*cur = (node_t*)me-1;
 		int i, j;
