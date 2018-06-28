@@ -19,10 +19,12 @@ int bstput(bst_t*me, void*item, size_t size){
 }
 static int put(btnod_t**dest, void*item, size_t size){
 	*dest = (btnod_t*)malloc(sizeof(btnod_t)+size);
-	if(*dest==NULL)return -1;
+	if(*dest==NULL)goto E_ALLOC;
 	memset(*dest, 0, sizeof(btnod_t));
 	memcpy(1+*dest, item, size);
 	return 0;
+	E_ALLOC:
+	return -1;
 }
 btnod_t*bstget(bst_t*me, void*key){
 	for(btnod_t*nod=me->root,*next;nod!=NULL;nod=next){
@@ -34,7 +36,7 @@ btnod_t*bstget(bst_t*me, void*key){
 }
 int bstrmv(bst_t*me, void*key){
 	btnod_t*rmvnod = bstget(me, key);
-	if(rmvnod==NULL)return -1;
+	if(rmvnod==NULL)goto E_NOEXIST;
 	btnod_t
 		*p=rmvnod->parent, *l=rmvnod->left, *r=rmvnod->right, *n;
 	free(rmvnod);
@@ -47,11 +49,13 @@ int bstrmv(bst_t*me, void*key){
 	}
 	if(p==NULL)me->root=n;
 	return 0;
+	E_NOEXIST:
+	return -1;
 }
 btnod_t*bstrotate(btnod_t*tree, int orient){
-	btnod_t*tmp;
 	do{
 		if(tree==NULL)break;
+		btnod_t*tmp;
 		if(orient<0){
 			if(tree->left==NULL)break;
 			tmp = tree->left->right;
