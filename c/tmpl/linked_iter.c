@@ -3,46 +3,50 @@
 #include<stdlib.h>
 #include<string.h>
 
-typedef struct{
-	void *next, *prev;
-}node_t;
+typedef union{
+	void*asarray[2];
+	struct{
+		void *next, *prev;
+	};
+}nod_t;
 
 void*linked_iter_next(void*me, int i){
+	if(!me)return NULL;
 	int j, k;
 	if(i<0)j=1,k=-i;
 	else j=0,k=i;
-	void**n = (void**)((node_t*)me-1);
+	nod_t*wrap = (nod_t*)me-1;
 	for(;k>=0;--k){
-		n = (void**)n[j];
-		if(!n)return NULL;
+		wrap = (nod_t*)wrap->asarray[j];
+		if(!wrap)return NULL;
 	}
-	return n[2];
+	return wrap+1;
 }
 void*linked_iter_insert(void*me, snake_t value, int how){
-	node_t*ins = (node_t*)malloc(sizeof(node_t)+value.count);
+	nod_t*ins = (nod_t*)malloc(sizeof(nod_t)+value.count);
 	if(!ins)return NULL;
 	void*data = ins+1;
 	if(value.hook)memcpy(data,value.hook,value.count);
 	if(me){
-		node_t*cur = (node_t*)me-1;
+		nod_t*cur = (nod_t*)me-1;
 		int i, j;
 		if(how<0)i=1, j=0;
 		else i=0, j=1;
-		((void**)ins)[i] = ((void**)cur)[i];
-		((void**)cur)[i] = ins;
-		((void**)ins)[j] = cur;
+		ins->asarray[i] = cur->asarray[i];
+		cur->asarray[i] = ins;
+		ins->asarray[j] = cur;
 	}else ins->next=ins->prev=NULL;
 	return data;
 }
 void*linked_iter_remove(void*me, int how){
 	if(!me)return NULL;
-	node_t*cur = (node_t*)me-1;
+	nod_t*wrap = (nod_t*)me-1;
 	int i, j;
 	if(how<0)i=1, j=0;
 	else i=0, j=1;
-	void*to_ret = ((void**)cur)[i];
-	((void**)to_ret)[j] = ((void**)cur)[j];
-	free(cur);
-	return to_ret;
+	nod_t*to_ret = (nod_t*)wrap->asarray[i];
+	to_ret->asarray[j] = wrap->asarray[j];
+	free(wrap);
+	return to_ret+1;
 }
 
