@@ -1,5 +1,5 @@
-#ifndef TMPL_SNAKE
-#define TMPL_SNAKE
+#ifndef TMPL_SNAKE_H
+#define TMPL_SNAKE_H
 
 #include<sys/types.h>
 
@@ -8,4 +8,8 @@ typedef struct{
 	size_t count;
 }snake_t;
 
-#endif//TMPL_SNAKE
+#define snake_string(string) ((snake_t){\
+	hook:string, count:sizeof(string),\
+})
+
+#endif//TMPL_SNAKE_H

@@ -1,5 +1,5 @@
-TARGET:=../libtmpl.a
-MOD:=bintree bst linked_iter
+TARGET:=../libwconv.a
+MOD:=../wconv
 OBJ:=$(addsuffix .o, $(MOD))
 
 $(TARGET):$(OBJ)

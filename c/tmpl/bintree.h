@@ -1,5 +1,5 @@
-#ifndef TMPL_BINTREE
-#define TMPL_BINTREE
+#ifndef TMPL_BINTREE_H
+#define TMPL_BINTREE_H
 
 #include<stddef.h>
 
@@ -17,4 +17,4 @@ typedef enum{
 }bt4each_t;
 extern int bt4each(btnod_t*, bt4each_t, int(*)(btnod_t*,void*), void*);
 
-#endif//TMPL_BINTREE
+#endif//TMPL_BINTREE_H
